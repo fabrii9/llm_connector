@@ -2,11 +2,19 @@
 <odoo>
     <!-- Plantillas precargadas: completar la API key y activar el que se use -->
     <data noupdate="1">
+        <record id="provider_kimi_code" model="llm.provider">
+            <field name="name">Kimi Code (membresía)</field>
+            <field name="provider_type">kimi_code</field>
+            <field name="sequence">5</field>
+            <field name="base_url">https://api.kimi.com/coding/v1</field>
+            <field name="model">kimi-for-coding</field>
+        </record>
         <record id="provider_kimi" model="llm.provider">
-            <field name="name">Kimi (Moonshot AI)</field>
+            <field name="name">Kimi Platform (pay-as-you-go)</field>
             <field name="provider_type">kimi</field>
             <field name="base_url">https://api.moonshot.ai/v1</field>
             <field name="model">kimi-k2-0905-preview</field>
+            <field name="active" eval="False"/>
         </record>
         <record id="provider_openai" model="llm.provider">
             <field name="name">OpenAI</field>

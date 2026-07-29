@@ -19,6 +19,11 @@ PROVIDER_DEFAULTS = {
         "default_model": "kimi-k2-0905-preview",
         "console_url": "https://platform.moonshot.ai/console/api-keys",
     },
+    "kimi_code": {
+        "base_url": "https://api.kimi.com/coding/v1",
+        "default_model": "kimi-for-coding",
+        "console_url": "https://www.kimi.com/code/console",
+    },
     "anthropic": {
         "base_url": "https://api.anthropic.com",
         "default_model": "claude-sonnet-4-5",
@@ -42,7 +47,7 @@ PROVIDER_DEFAULTS = {
 }
 
 # Proveedores que usan la API compatible con OpenAI (/chat/completions)
-OPENAI_COMPATIBLE = ("openai", "kimi", "groq", "custom")
+OPENAI_COMPATIBLE = ("openai", "kimi", "kimi_code", "groq", "custom")
 
 
 class LlmProvider(models.Model):
@@ -55,7 +60,8 @@ class LlmProvider(models.Model):
     active = fields.Boolean(default=True)
     provider_type = fields.Selection(
         selection=[
-            ("kimi", "Kimi (Moonshot AI)"),
+            ("kimi_code", "Kimi Code (membresía)"),
+            ("kimi", "Kimi Platform (pay-as-you-go)"),
             ("openai", "OpenAI"),
             ("anthropic", "Anthropic (Claude)"),
             ("gemini", "Google Gemini"),
@@ -64,7 +70,7 @@ class LlmProvider(models.Model):
         ],
         string="Proveedor",
         required=True,
-        default="kimi",
+        default="kimi_code",
     )
     api_key = fields.Char(string="API Key")
     base_url = fields.Char(
@@ -124,7 +130,7 @@ class LlmProvider(models.Model):
         """Devuelve el primer proveedor activo (con API key), opcionalmente
         filtrado por tipo. Pensado como punto de entrada para otros módulos:
 
-            provider = self.env["llm.provider"].sudo().get_provider("kimi")
+            provider = self.env["llm.provider"].sudo().get_provider("kimi_code")
         """
         domain = [("active", "=", True), ("api_key", "!=", False)]
         if provider_type:

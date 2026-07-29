@@ -10,8 +10,14 @@ Estas APIs no ofrecen login OAuth: la conexión es con **API key**. El flujo es:
 
 1. Instalar el módulo `llm_connector`.
 2. Ir a **LLM Connector → Proveedores** (requiere grupo *LLM Connector Manager*).
-3. Abrir la plantilla precargada (p. ej. *Kimi (Moonshot AI)*) y presionar **Obtener API key**: se abre la consola del proveedor, te logueás, generás la key y la pegás en el campo **API key**.
+3. Abrir la plantilla precargada y presionar **Obtener API key**: se abre la consola del proveedor, te logueás, generás la key y la pegás en el campo **API key**.
 4. Presionar **Probar conexión**. Si queda en verde, ya está lista para usar.
+
+### Kimi con cuota de membresía (sin pay-as-you-go)
+
+Si tenés membresía Kimi, usá el preset **Kimi Code (membresía)**: generá la key en la [Kimi Code Console](https://www.kimi.com/code/console) y el consumo se descuenta de tu cuota de membresía (la misma que usa la extensión de VS Code). El preset *Kimi Platform (pay-as-you-go)* queda para uso empresarial con saldo cargado.
+
+> Nota: el endpoint de membresía está pensado para escenarios de programación y comparte cuota con tu IDE — si Odoo consume mucho, puede rate-limitar tu VS Code.
 
 ## Uso desde otros módulos
 
@@ -25,7 +31,7 @@ Y llamar al modelo:
 
 ```python
 # Obtener el proveedor activo (sudo: el usuario final no tiene permisos de config)
-provider = self.env["llm.provider"].sudo().get_provider("kimi")
+provider = self.env["llm.provider"].sudo().get_provider("kimi_code")
 
 # Consulta simple
 texto = provider.generate("Resumí este texto en 3 líneas: ...", system="Sos un asistente útil.")
