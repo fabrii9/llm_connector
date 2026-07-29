@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_llm_provider_list" model="ir.ui.view">
+        <field name="name">llm.provider.list</field>
+        <field name="model">llm.provider</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="provider_type"/>
+                <field name="model"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'ok'"
+                       decoration-danger="state == 'fail'"
+                       decoration-muted="state == 'draft'"/>
+                <field name="last_test_date"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_llm_provider_form" model="ir.ui.view">
+        <field name="name">llm.provider.form</field>
+        <field name="model">llm.provider</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_open_console" type="object"
+                            string="Obtener API key"
+                            invisible="not console_url"
+                            help="Abre la consola del proveedor para generar la API key"/>
+                    <button name="action_test_connection" type="object"
+                            string="Probar conexión" class="btn-primary"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,ok,fail"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Ej. Kimi (Moonshot AI)"/></h1>
+                    </div>
+                    <group>
+                        <group name="connection" string="Conexión">
+                            <field name="provider_type"/>
+                            <field name="console_url" invisible="1"/>
+                            <field name="api_key" password="True"/>
+                            <field name="base_url"/>
+                            <field name="model"/>
+                        </group>
+                        <group name="params" string="Parámetros por defecto">
+                            <field name="temperature"/>
+                            <field name="max_tokens"/>
+                            <field name="timeout"/>
+                            <field name="sequence"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <group name="test" string="Última prueba de conexión">
+                        <field name="last_test_date" nolabel="1"/>
+                        <field name="last_test_message" nolabel="1" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_llm_provider_search" model="ir.ui.view">
+        <field name="name">llm.provider.search</field>
+        <field name="model">llm.provider</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="provider_type"/>
+                <field name="model"/>
+                <filter name="active" string="Activos"
+                        domain="[('active', '=', True)]"/>
+                <filter name="state_ok" string="Conexión OK"
+                        domain="[('state', '=', 'ok')]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_provider" string="Proveedor"
+                            context="{'group_by': 'provider_type'}"/>
+                    <filter name="group_state" string="Estado"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

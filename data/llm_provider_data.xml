@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Plantillas precargadas: completar la API key y activar el que se use -->
+    <data noupdate="1">
+        <record id="provider_kimi" model="llm.provider">
+            <field name="name">Kimi (Moonshot AI)</field>
+            <field name="provider_type">kimi</field>
+            <field name="base_url">https://api.moonshot.ai/v1</field>
+            <field name="model">kimi-k2-0905-preview</field>
+        </record>
+        <record id="provider_openai" model="llm.provider">
+            <field name="name">OpenAI</field>
+            <field name="provider_type">openai</field>
+            <field name="base_url">https://api.openai.com/v1</field>
+            <field name="model">gpt-4o-mini</field>
+            <field name="active" eval="False"/>
+        </record>
+        <record id="provider_anthropic" model="llm.provider">
+            <field name="name">Anthropic (Claude)</field>
+            <field name="provider_type">anthropic</field>
+            <field name="base_url">https://api.anthropic.com</field>
+            <field name="model">claude-sonnet-4-5</field>
+            <field name="active" eval="False"/>
+        </record>
+        <record id="provider_gemini" model="llm.provider">
+            <field name="name">Google Gemini</field>
+            <field name="provider_type">gemini</field>
+            <field name="base_url">https://generativelanguage.googleapis.com/v1beta</field>
+            <field name="model">gemini-2.5-flash</field>
+            <field name="active" eval="False"/>
+        </record>
+        <record id="provider_groq" model="llm.provider">
+            <field name="name">Groq</field>
+            <field name="provider_type">groq</field>
+            <field name="base_url">https://api.groq.com/openai/v1</field>
+            <field name="model">llama-3.3-70b-versatile</field>
+            <field name="active" eval="False"/>
+        </record>
+    </data>
+</odoo>
