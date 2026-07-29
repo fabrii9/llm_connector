@@ -76,11 +76,12 @@
                         domain="[('active', '=', True)]"/>
                 <filter name="state_ok" string="Conexión OK"
                         domain="[('state', '=', 'ok')]"/>
-                <group expand="0" string="Agrupar por">
+                <separator/>
+                <group>
                     <filter name="group_provider" string="Proveedor"
-                            context="{'group_by': 'provider_type'}"/>
+                            domain="[]" context="{'group_by': 'provider_type'}"/>
                     <filter name="group_state" string="Estado"
-                            context="{'group_by': 'state'}"/>
+                            domain="[]" context="{'group_by': 'state'}"/>
                 </group>
             </search>
         </field>
