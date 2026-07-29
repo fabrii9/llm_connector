@@ -325,20 +325,21 @@ class LlmProvider(models.Model):
 
     def _headers(self):
         self.ensure_one()
-        if not self.api_key:
+        api_key = (self.api_key or "").strip()
+        if not api_key:
             raise UserError(
                 _("El proveedor %s no tiene API key configurada.") % self.name
             )
         if self.provider_type == "anthropic":
             return {
-                "x-api-key": self.api_key,
+                "x-api-key": api_key,
                 "anthropic-version": "2023-06-01",
                 "Content-Type": "application/json",
             }
         if self.provider_type == "gemini":
             return {"Content-Type": "application/json"}
         return {
-            "Authorization": "Bearer %s" % self.api_key,
+            "Authorization": "Bearer %s" % api_key,
             "Content-Type": "application/json",
         }
 
@@ -348,7 +349,7 @@ class LlmProvider(models.Model):
         headers = {**self._headers(), **headers}
         params = kwargs.pop("params", {})
         if self.provider_type == "gemini":
-            params = {**params, "key": self.api_key}
+            params = {**params, "key": (self.api_key or "").strip()}
         try:
             response = requests.request(
                 method,
