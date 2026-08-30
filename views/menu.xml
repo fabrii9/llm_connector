@@ -22,6 +22,7 @@
         name="LLM Connector"
         sequence="50"
         groups="group_llm_manager"
+        web_icon="llm_connector,static/description/icon.png"
     />
     <menuitem
         id="menu_llm_provider"
