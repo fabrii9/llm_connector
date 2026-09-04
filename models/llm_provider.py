@@ -275,13 +275,16 @@ class LlmProvider(models.Model):
         body = {
             "model": selected_model,
             "messages": messages,
-            "temperature": self.temperature if temperature is None else temperature,
             (
                 "max_completion_tokens"
                 if uses_max_completion_tokens
                 else "max_tokens"
             ): token_limit,
         }
+        if not uses_max_completion_tokens:
+            body["temperature"] = (
+                self.temperature if temperature is None else temperature
+            )
         body.update(extra or {})
         return self._request("POST", self._url("/chat/completions"), json=body)
 
