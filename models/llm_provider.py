@@ -49,6 +49,10 @@ PROVIDER_DEFAULTS = {
 # Proveedores que usan la API compatible con OpenAI (/chat/completions)
 OPENAI_COMPATIBLE = ("openai", "kimi", "kimi_code", "groq", "custom")
 
+# OpenAI dejó max_tokens obsoleto para sus modelos de razonamiento y GPT-5.
+# Los proveedores compatibles conservan el parámetro histórico.
+OPENAI_MAX_COMPLETION_PREFIXES = ("gpt-5", "o1", "o3", "o4")
+
 
 class LlmProvider(models.Model):
     _name = "llm.provider"
@@ -261,11 +265,22 @@ class LlmProvider(models.Model):
 
     def _chat_openai(self, messages, model=None, temperature=None,
                      max_tokens=None, extra=None):
+        selected_model = model or self.model
+        token_limit = max_tokens or self.max_tokens
+        model_name = (selected_model or "").strip().lower()
+        uses_max_completion_tokens = (
+            self.provider_type == "openai"
+            and model_name.startswith(OPENAI_MAX_COMPLETION_PREFIXES)
+        )
         body = {
-            "model": model or self.model,
+            "model": selected_model,
             "messages": messages,
             "temperature": self.temperature if temperature is None else temperature,
-            "max_tokens": max_tokens or self.max_tokens,
+            (
+                "max_completion_tokens"
+                if uses_max_completion_tokens
+                else "max_tokens"
+            ): token_limit,
         }
         body.update(extra or {})
         return self._request("POST", self._url("/chat/completions"), json=body)
