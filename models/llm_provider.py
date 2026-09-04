@@ -51,7 +51,7 @@ OPENAI_COMPATIBLE = ("openai", "kimi", "kimi_code", "groq", "custom")
 
 # OpenAI dejó max_tokens obsoleto para sus modelos de razonamiento y GPT-5.
 # Los proveedores compatibles conservan el parámetro histórico.
-OPENAI_MAX_COMPLETION_PREFIXES = ("gpt-5", "o1", "o3", "o4")
+OPENAI_REASONING_PREFIXES = ("gpt-5", "o1", "o3", "o4")
 
 
 class LlmProvider(models.Model):
@@ -266,26 +266,37 @@ class LlmProvider(models.Model):
     def _chat_openai(self, messages, model=None, temperature=None,
                      max_tokens=None, extra=None):
         selected_model = model or self.model
-        token_limit = max_tokens or self.max_tokens
+        token_limit = self.max_tokens if max_tokens is None else max_tokens
         model_name = (selected_model or "").strip().lower()
         uses_max_completion_tokens = (
             self.provider_type == "openai"
-            and model_name.startswith(OPENAI_MAX_COMPLETION_PREFIXES)
+            and any(
+                model_name == prefix
+                or model_name.startswith((prefix + "-", prefix + "."))
+                for prefix in OPENAI_REASONING_PREFIXES
+            )
         )
+        extra_body = dict(extra or {})
         body = {
             "model": selected_model,
             "messages": messages,
-            (
-                "max_completion_tokens"
-                if uses_max_completion_tokens
-                else "max_tokens"
-            ): token_limit,
         }
+        if "max_completion_tokens" in extra_body:
+            body["max_completion_tokens"] = extra_body.pop(
+                "max_completion_tokens"
+            )
+            extra_body.pop("max_tokens", None)
+        elif uses_max_completion_tokens:
+            body["max_completion_tokens"] = extra_body.pop(
+                "max_tokens", token_limit
+            )
+        else:
+            body["max_tokens"] = extra_body.pop("max_tokens", token_limit)
         if not uses_max_completion_tokens:
             body["temperature"] = (
                 self.temperature if temperature is None else temperature
             )
-        body.update(extra or {})
+        body.update(extra_body)
         return self._request("POST", self._url("/chat/completions"), json=body)
 
     def _chat_anthropic(self, messages, model=None, temperature=None,

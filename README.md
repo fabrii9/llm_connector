@@ -48,6 +48,8 @@ data = provider.chat_completion(messages, raw=True)
 
 Parámetros opcionales de `chat_completion` / `generate`: `model`, `temperature`, `max_tokens`, `raw=True`, y cualquier parámetro extra se pasa directo al body de la API.
 
+Para modelos OpenAI GPT-5 y o-series, el conector normaliza `max_tokens` a `max_completion_tokens` y omite temperaturas personalizadas no admitidas. Esta adaptación no se aplica a Kimi, Groq ni proveedores personalizados.
+
 Si no se pasa tipo a `get_provider()`, devuelve el primer proveedor activo con API key (ordenado por secuencia).
 
 ## Notas
