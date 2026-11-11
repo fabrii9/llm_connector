@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 {
     "name": "LLM Connector",
-    "summary": "Conector base a modelos LLM (Kimi, OpenAI, Anthropic, Gemini, Groq) para usar desde otros módulos",
-    "version": "19.0.1.0.3",
+    "summary": "Conector base a modelos LLM (Kimi, OpenAI, Anthropic, Claude por suscripción, Gemini, Groq) para usar desde otros módulos",
+    "version": "19.0.1.0.5",
     "category": "Tools",
     "author": "AfterMoves",
     "website": "https://aftermoves.com",

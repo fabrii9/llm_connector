@@ -42,8 +42,10 @@
                         <group name="connection" string="Conexión">
                             <field name="provider_type"/>
                             <field name="console_url" invisible="1"/>
-                            <field name="api_key" password="True"/>
-                            <field name="base_url"/>
+                            <field name="api_key" password="True"
+                                   invisible="provider_type == 'claude_subscription'"/>
+                            <field name="base_url"
+                                   invisible="provider_type == 'claude_subscription'"/>
                             <field name="model"/>
                         </group>
                         <group name="params" string="Parámetros por defecto">
@@ -54,6 +56,45 @@
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="active" widget="boolean_toggle"/>
                         </group>
+                    </group>
+                    <div class="alert alert-info" role="status" colspan="2"
+                         invisible="provider_type != 'anthropic'">
+                        <p class="mb-1"><strong>Claude por API.</strong> Pegá la API key de
+                            <code>console.anthropic.com</code> (empieza con <code>sk-ant-api</code>),
+                            guardá y tocá <em>Probar conexión</em>: hace un pedido mínimo para
+                            confirmar la clave y el crédito.</p>
+                        <p class="mb-1">Modelos (campo <em>Modelo</em>):
+                            <code>claude-opus-5-5</code> (el más completo, recomendado) ·
+                            <code>claude-sonnet-5-5</code> (rápido, la mitad de precio) ·
+                            <code>claude-haiku-5-5</code> (tareas simples, el más barato) ·
+                            <code>claude-fable-5-2</code> (el más potente, el más caro).
+                            También sirven los alias <code>opus</code>, <code>sonnet</code>,
+                            <code>haiku</code> y <code>fable</code>.</p>
+                        <p class="mb-0">La temperatura no se usa con estos modelos. Recomendado:
+                            máximo de tokens 16000 y timeout de 300 s. Cada pedido se cobra en la
+                            cuenta de Anthropic: conviene fijar un tope mensual en la consola.</p>
+                    </div>
+                    <group name="claude_subscription" string="Claude (suscripción)"
+                           invisible="provider_type != 'claude_subscription'"
+                           groups="base.group_system">
+                        <group>
+                            <field name="claude_token_set" readonly="1"/>
+                            <field name="claude_oauth_token_input" password="True"
+                                   placeholder="sk-ant-oat01-… (se guarda y no se vuelve a mostrar)"/>
+                            <button name="action_clear_claude_token" type="object"
+                                    string="Borrar token guardado" class="btn-link"
+                                    invisible="not claude_token_set"
+                                    confirm="¿Borrar el token? Se usará CLAUDE_CODE_OAUTH_TOKEN del contenedor, si existe."/>
+                        </group>
+                        <div class="text-muted" colspan="2">
+                            Usa Claude Code (<code>claude -p</code>) instalado en el servidor con la
+                            suscripción de Claude: no cobra por API. Generá el token con
+                            <code>claude setup-token</code> (empieza con <code>sk-ant-oat</code>) y pegalo
+                            acá. Si lo dejás vacío se usa la variable <code>CLAUDE_CODE_OAUTH_TOKEN</code>
+                            del contenedor. Modelos: <code>sonnet</code>, <code>opus</code>,
+                            <code>haiku</code> o un ID <code>claude-*</code>. Temperatura y máximo de
+                            tokens no se aplican. Recomendado: timeout de 300 s o más.
+                        </div>
                     </group>
                     <group name="test" string="Última prueba de conexión">
                         <field name="last_test_date" nolabel="1"/>
